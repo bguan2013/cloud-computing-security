@@ -1,0 +1,17 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /(index.html){0,1}
+  static_files: index.html
+  upload: index.html
+
+- url: /css
+  static_dir: css
+
+- url: /(event|events|remove)
+  script: server.app
+
+- url: /delete
+  script: server.app

@@ -1,0 +1,8 @@
+h1 {text-align: center;}
+form {width: 300px; margin: 0 auto;}
+form input, form textarea {width: 100%; margin: 5px;}
+.div_events {display: inline;}
+.div_events div{display: inline-block;}
+.div_event {height: 150px; width:150px; border: 1px solid black; float: left; margin: 10px;}
+.div_event > div {display: block; text-align: center; margin: 10px;}
+.event_title {font-weight: bold;}

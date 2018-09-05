@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <title>Hello, world!</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script type="text/javascript">
+      function getJSON(url) {
+        return new Promise((resolve, reject) => {
+          let xhr = new XMLHttpRequest(); xhr.open('GET', url);
+          xhr.responseType = 'json';
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve({status: xhr.status, data: xhr.response}); 
+            } else {
+              reject({status: xhr.status, data: xhr.responseText}); 
+            }
+          };
+          xhr.onerror = () => {
+            reject({status: xhr.status, data: xhr.responseText}); 
+          };
+          xhr.send();
+        });
+      }
+      document.addEventListener('DOMContentLoaded', () => { 
+        if($.cookie('submit_status')) {
+          alert($.cookie('submit_status') + ' Key: ' + $.cookie('event_id'));
+          $.removeCookie('submit_status', { path: '/' });
+        } 
+
+        getJSON('/events').then(({status, data}) => {      
+          //Use the *data* argument to change what we see on the page.  
+          let countDownDict = {};      
+          for (i = 0; i < data.length; i++) {
+            //There are better ways, but this is illustrative of the concept:
+            html = '<div class=\'div_event\' id=\'event_' + i + '\'>' +
+                      '<div class=\'event_title\'>' + data[i].title + '</div>' +
+                      '<div>' + data[i].date + '</div>' +
+                      '<div id=\'event_countdown_' + i + '\'>' +
+                      '</div>' +
+                    '</div>';
+            $(html).appendTo('#events');
+            countDownDict['event_countdown_' + i] = data[i].date;
+          }
+          setInterval(function () {
+              setCountDownTimer(countDownDict);
+          }, 1000);
+        }).catch(({status, data}) => {
+          $('#events').html('ERROR: ' + JSON.stringify(data));
+        });
+        function setCountDownTimer(countDownDict) {
+
+          // Get todays date and time
+          for (var elementId in countDownDict) {
+            var now = new Date().getTime();
+            // Find the distance between now and the count down date
+            var distance = new Date(countDownDict[elementId]).getTime() - now;
+            
+            // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Output the result in an element with id="demo"
+            document.getElementById(elementId).innerHTML = days + "d " + hours + "h "
+            + minutes + "m " + seconds + "s ";
+            
+            // If the count down is over, write some text 
+            if (distance < 0) {
+              document.getElementById(elementId).innerHTML = "EXPIRED";
+            }
+          }
+    
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Events</h1>
+    <form action="event" method="post">
+      <div>
+        <label>Title</label>
+        <input type="text" name="title"/>
+      </div>
+      <div>
+        <label>Date</label>
+        <input type="date" name="date"/>
+      </div>
+      <div>
+        <label>Description</label>
+        <textarea name="content"></textarea>
+      </div>
+      <div>
+        <input type="submit"/>
+      </div> 
+    </form>    
+    <div class="div_events" id="events"></div>
+  </body>
+</html>
