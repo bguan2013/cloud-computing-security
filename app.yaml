@@ -10,8 +10,5 @@ handlers:
 - url: /css
   static_dir: css
 
-- url: /(event|events|remove)
-  script: server.app
-
-- url: /delete
+- url: /(event|events)(/.*){0,1}
   script: server.app
