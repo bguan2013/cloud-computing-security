@@ -5,6 +5,7 @@ class Event(ndb.Model):
 	title = ndb.StringProperty()
 	content = ndb.StringProperty()
 
+	#query_all takes the event table itself and orders all by the event date in descending order 
 	@classmethod
 	def query_all(cls):
 		return cls.query().order(-cls.date)

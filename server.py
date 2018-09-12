@@ -6,7 +6,9 @@ import webapp2
 import logging
 from event import Event
 
+
 class Encoder(json.JSONEncoder):
+	#helper method taking an object to encode datetime into json string
     def default(self, obj):
         if isinstance(obj, datetime):
             return obj.isoformat()
@@ -15,22 +17,22 @@ class Encoder(json.JSONEncoder):
 
 
 class Remove(webapp2.RequestHandler): 
+	#takes an event key id and deletes from the event table
 	def delete(self, id):
 		event_id = 'Does not exist'
 		try:
 			path_array = self.request.path.split('/')
 			logging.info('path array: ' + repr(path_array))
 			if len(path_array) > 1:
-				event_id = path_array[len(path_array)-1]		
-				#Event.query(Event.Key.id() == event_id).fetch().delete()
+				event_id = path_array[len(path_array)-1]
 				ndb.Key(urlsafe=event_id).delete()
 				self.response.write(json.dumps(dict(id=repr(event_id), status='success')))
 		except Exception as e:
 			self.response.write(json.dumps(dict(id=repr(event_id), status='failed to delete event')))
 			logging.exception(e)
 
-
 class SubmitForm(webapp2.RequestHandler):
+	#saves a new event by taking the title, content and date from the request.
 	def post(self):
 		try:
 			json_event = json.loads(self.request.body)
@@ -48,6 +50,7 @@ class AllEvents(webapp2.RequestHandler):
 	def date_handler(obj):
 	    if hasattr(obj, 'isoformat'):
 	        return obj.isoformat()
+	#get all the events and return them in a json string format back to the client
 	def get(self):
 		all_events = [dict(e.to_dict(), **dict(id=repr(e.key.urlsafe()))) for e in Event.query_all().fetch()]
 		all_events_json = json.dumps(all_events, cls=Encoder, indent=4)

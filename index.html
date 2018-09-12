@@ -9,6 +9,10 @@
         refreshEventList();
       });
       var interval = null;
+
+      /*
+       * This method is for refreshing the event list every time we add or delete an event
+       */
       function refreshEventList() {
         getJSON('/events').then(({status, data}) => {
           clearInterval(interval);
@@ -34,6 +38,13 @@
         });
       }
 
+      /*
+       *
+       * This sets the countdown timer for all the events, it will search the for the event element with 
+       * the elementId (id)
+       * 
+       * countDownDict: a map of the event html elementId (key) to the event date (value) 
+       */
       function setCountDownTimer(countDownDict) {
 
         // Get todays date and time
@@ -60,6 +71,9 @@
   
       }
 
+      /*
+       * This method parses the new event form into a json 
+       */
       function getNewEventJSON() {
         var formArray = $('#new_event').serializeArray();
         var returnArray = {};
@@ -69,6 +83,11 @@
         return returnArray;
       }
 
+      /*
+       * This method get all the events from the server as a json 
+       *
+       * url: server url for requesting the json 
+       */
       function getJSON(url) {
         return new Promise((resolve, reject) => {
           let xhr = new XMLHttpRequest(); xhr.open('GET', url);
@@ -86,6 +105,11 @@
           xhr.send();
         });
       }
+      /*
+       * This method sends the new JSON event back to the server and saves it, after that it refreshes the list 
+       *
+       * url: server url for adding the event 
+       */
       function addEvent(url) {
         return new Promise((resolve, reject) => {
           let xhr = new XMLHttpRequest(); xhr.open('POST', url);
@@ -105,6 +129,13 @@
           xhr.send(JSON.stringify(getNewEventJSON()));
         });
       }
+      /*
+       * This method sends the id of the event and sends a request to the server to remove the event based on the id and refreshes
+       * the list on the client
+       *
+       * url: server url for remove the event
+       * id: the event key id that will be used to index the event table and remove the event with the id
+       */
       function removeEvent(url, id) {
         return new Promise((resolve, reject) => {
           let xhr = new XMLHttpRequest(); xhr.open('DELETE', url + '/' + id);
