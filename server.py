@@ -43,7 +43,7 @@ class SubmitForm(webapp2.RequestHandler):
 			event.put()
 			self.response.write(json.dumps(dict(id=repr(event.key.urlsafe()), status='success')))
 		except Exception as e: 
-			self.response.write(json.dumps(dict(id=repr(event.key.urlsafe()), status='failed to save event')))
+			self.response.write(json.dumps({'status':'failed to save event'}))
 			logging.exception(e)
 
 class AllEvents(webapp2.RequestHandler):
