@@ -6,9 +6,34 @@ handlers:
 - url: /(index.html){0,1}
   static_files: index.html
   upload: index.html
+  secure: always
+
+- url: /login.html
+  static_files: login.html
+  upload: login.html
+  secure: always
+
+- url: /register.html
+  static_files: register.html
+  upload: register.html
+  secure: always
 
 - url: /css
   static_dir: css
+  secure: always
+
+- url: /js
+  static_dir: js
+  secure: always
 
 - url: /(event|events)(/.*){0,1}
   script: server.app
+  secure: always
+
+- url: /(register|login|logout|getuser)
+  script: login.app
+  secure: always
+
+- url: /migrate
+  script: migrate.app
+  secure: always
